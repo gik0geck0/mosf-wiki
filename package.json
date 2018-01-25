@@ -1,0 +1,16 @@
+{
+  "name": "wiki",
+  "version": "0.0.1",
+  "description": "General purpose wiki API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Matt Buland",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2",
+    "node-env-file": "^0.1.8",
+    "pg": "^7.4.1"
+  }
+}
