@@ -28,12 +28,12 @@ function td(b)		{ return tag("td", b); }
 function th(b)		{ return tag("th", b); }
 function tr(b)		{ return tag("tr", b); }
 function table(b)	{ return tag("table", b); }
-
 function tag(tagName, content) { return "<" + tagName + ">" + content + "</" + tagName + ">"; }
+function wcimport(cmpname)  { return "<link rel='import' href='/components/" + cmpname + ".html'>"; }
 
 db.connect((dbErr) => {
 	if (dbErr) {
-		console.error('connection error', err.stack);
+		console.error('connection error', dbErr.stack);
 		return;
 	}
 	console.log("Connected to db!");
@@ -85,6 +85,30 @@ db.connect((dbErr) => {
 			res.send(html(h1(data.rows[0].title)));
 		});
 	});
+
+    app.get('/wc', (req, res) => {
+        res.send(html(
+            wcimport("test-cmp") +
+            tag("test-cmp")
+        ));
+    });
+
+    app.get('/components/:cmpname.html', (req, res) => {
+        const cmpName = req.params.cmpname;
+        const cmpDir = __dirname + '/components/' + cmpName;
+        if (fs.existsSync(cmpDir)) {
+            fs.readFile(cmpDir + '/' + cmpName + '.html', (err, data) => {
+                if (err) {
+                    throw err;
+                }
+                res.type("html");
+                res.send(data);
+            });
+        } else {
+            console.log("Component " + cmpName + " doesn't exist");
+            res.status(404);
+        }
+    });
 
 	app.listen(config.port, () => console.log("Listening on port " + config.port));
 });
