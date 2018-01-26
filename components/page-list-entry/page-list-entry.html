@@ -1,0 +1,35 @@
+<template>
+    <tr>
+        <td id="index"></td>
+        <td id="title"></td>
+    </tr>
+</template>
+<script>
+(function() {
+    var thatDoc = document;
+    var thisDoc = (thatDoc._currentScript || thatDoc.currentScript).ownerDocument;
+    var template = thisDoc.querySelector( 'template' ).content;
+
+    class PageListEntry extends HTMLElement {
+        constructor() {
+            super();
+        }
+
+        connectedCallback() {
+            var shadowRoot = this.attachShadow({mode:'open'});
+
+            // Adds a template clone into shadow root.
+            var clone = thatDoc.importNode(template, true);
+            shadowRoot.appendChild(clone);
+            this.setAttributes();
+        }
+
+        setAttributes() {
+            this.shadowRoot.getElementById("index").innerHTML = this.getAttribute('index');
+            this.shadowRoot.getElementById("title").innerHTML = this.getAttribute('title');
+        }
+    }
+
+    window.customElements.define("page-list-entry", PageListEntry);
+})();
+</script>

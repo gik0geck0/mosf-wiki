@@ -1,0 +1,29 @@
+<template>
+    <div>
+        I was dynamically loaded!
+    </div>
+</template>
+<script>
+(function() {
+    var thatDoc = document;
+    var thisDoc = (thatDoc._currentScript || thatDoc.currentScript).ownerDocument;
+    var template = thisDoc.querySelector( 'template' ).content;
+
+    class DynamicCmp extends HTMLElement {
+        constructor() {
+            super();
+        }
+
+        connectedCallback() {
+            var shadowRoot = this.attachShadow({mode:'open'});
+
+            // Adds a template clone into shadow root.
+            var clone = thatDoc.importNode(template, true);
+            shadowRoot.appendChild(clone);
+        }
+    }
+
+    console.log("Registering dynamic-cmp");
+    window.customElements.define("dynamic-cmp", DynamicCmp);
+})();
+</script>

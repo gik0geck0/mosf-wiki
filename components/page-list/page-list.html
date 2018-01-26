@@ -1,0 +1,63 @@
+<template>
+    <h1>Page Listing</h1>
+    <table id="pageList">
+        <tbody id="tbody">
+            <tr>
+                <th>URL</th>
+                <th>Title</th>
+            </tr>
+        </tbody>
+    </table>
+    <button id="bAddRow">Add Row</button>
+</template>
+<script>
+(function() {
+    var thatDoc = document;
+    var thisDoc = (thatDoc._currentScript || thatDoc.currentScript).ownerDocument;
+    var template = thisDoc.querySelector( 'template' ).content;
+
+    function tag(tagName, body) {
+        var e = document.createElement(tagName);
+        if (body !== null && body !== undefined) {
+            e.innerHTML = body;
+        }
+        return e;
+    }
+
+    function newEntry(index, title) {
+        var e = document.createElement("page-list-entry");
+        e.setAttribute("index", index);
+        e.setAttribute("title", title);
+        return e;
+    }
+
+    class PageList extends HTMLElement {
+        constructor() {
+            super();
+            this.index = 0;
+        }
+
+        connectedCallback() {
+            var shadowRoot = this.attachShadow({mode:'open'});
+
+            // Adds a template clone into shadow root.
+            var clone = thatDoc.importNode(template, true);
+            shadowRoot.appendChild(clone);
+
+            this.initHandlers();
+        }
+
+        onAddRow() {
+            $WC.createComponent("page-list-entry", {index: this.index++, title: "Row"}).then((newElement) => {
+                this.shadowRoot.getElementById('tbody').appendChild(newElement);
+            });
+        }
+
+        initHandlers() {
+            this.shadowRoot.getElementById("bAddRow").addEventListener("click", this.onAddRow.bind(this));
+        }
+    }
+
+    window.customElements.define("page-list", PageList);
+})();
+</script>

@@ -20,10 +20,16 @@ const app = express();
 const { Client } = require('pg');
 const db = new Client(config.db);
 
+function wclib() {
+    return "<script>" +
+        fs.readFileSync(__dirname + '/lib/js/wclib.js') +
+        "</script>";
+}
+
 function a(label, url) 	{ return "<a href=\"" + url + "\">" + label + "</a>"; }
 function div(b) 	{ return tag("div", b); }
 function h1(b)		{ return tag("h1", b); }
-function html(b) 	{ return "<html><head><title>Buland Wiki</title></head><body>" + b+ "</body></html>"; }
+function html(b) 	{ return "<html><head>" + wclib() + "<title>Buland Wiki</title></head><body>" + b+ "</body></html>"; }
 function td(b)		{ return tag("td", b); }
 function th(b)		{ return tag("th", b); }
 function tr(b)		{ return tag("tr", b); }
@@ -90,6 +96,13 @@ db.connect((dbErr) => {
         res.send(html(
             wcimport("test-cmp") +
             tag("test-cmp")
+        ));
+    });
+
+    app.get('/wc/list', (req, res) => {
+        res.send(html(
+            wcimport("page-list") +
+            tag("page-list")
         ));
     });
 
